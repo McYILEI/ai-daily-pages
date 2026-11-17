@@ -60,11 +60,11 @@ def cover_of(body):
 
 
 def save_cover(date, no, b64):
-    """把内嵌图片存成 assets/covers/<日期>-<编号>.jpg（宽 720），已存在就跳过。"""
+    """把内嵌图片存成 assets/covers/<日期>-<编号>.jpg（宽 720）。"""
     import base64, io
     rel = 'assets/covers/%s-%s.jpg' % (date, no)
     path = os.path.join(ROOT, rel)
-    if not os.path.isfile(path):
+    if True:  # 每次重新生成，保证和早报页里的图一致
         os.makedirs(os.path.dirname(path), exist_ok=True)
         raw = base64.b64decode(b64)
         try:
