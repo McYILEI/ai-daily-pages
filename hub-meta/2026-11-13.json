@@ -1,0 +1,70 @@
+{
+ "_note": "可选：总入口展示用的名称/关键词/标签/一句话，按早报页里条目名称（去掉 emoji）包含匹配；没有的条目由 build_index.py 从页面自动生成",
+ "items": {
+  "Agent 订机票": {
+   "display": "Agent 订机票",
+   "keywords": "Travelport · Mastercard · 代订支付",
+   "tag": "用户授权",
+   "tag_color": "green",
+   "line": "批准一次、付款按批准核对，Agent 全程看不到卡号"
+  },
+  "ChatGPT dots": {
+   "display": "ChatGPT dots",
+   "keywords": "直接做 · 先问我 · 交给我做",
+   "tag": "权限分级",
+   "tag_color": "lime",
+   "line": "每类动作要不要先问用户，做成了四档规则"
+  },
+  "Plurai": {
+   "display": "Plurai Simulation",
+   "keywords": "Claude Code · 数字孪生 · 模拟用户",
+   "tag": "Agent 评测",
+   "tag_color": "teal",
+   "line": "评测看 Agent 实际改了什么，而不是它说了什么"
+  },
+  "United": {
+   "display": "United 限制第三方 Agent",
+   "keywords": "官网 · App · 代订",
+   "tag": "平台规则",
+   "tag_color": "orange",
+   "line": "未经授权的 AI Agent 不能代订，旅行社和聚合平台也一样"
+  },
+  "Otto": {
+   "display": "商旅 Agent Otto",
+   "keywords": "Claude · ChatGPT · MCP",
+   "tag": "商旅预订",
+   "tag_color": "yellow",
+   "line": "过半预订已经从 Claude 和 ChatGPT 里直接发起"
+  },
+  "Founder Park": {
+   "keywords": "黄东旭 · 低延迟模型 · 即时生成界面",
+   "tag": "Agent 工程",
+   "tag_color": "teal",
+   "line": "模型快十倍之后，后台任务会变成边聊边出的实时交互"
+  },
+  "即梦动效工作室": {
+   "keywords": "文字生成动效 · 配音配乐 · 60 秒成片",
+   "tag": "内容制作",
+   "tag_color": "orange",
+   "line": "一段文字生成带配音和配乐的动效视频，实测约 8.5 分钟出片"
+  },
+  "YouArt Desktop": {
+   "keywords": "After Effects · CapCut · Blender",
+   "tag": "内容制作",
+   "tag_color": "orange",
+   "line": "直接操作本地剪辑软件的视频制作 Agent，PH 日榜第 2"
+  },
+  "PhocusWire": {
+   "keywords": "财报会 · AI 引流 · 转化率",
+   "tag": "旅行+AI",
+   "tag_color": "green",
+   "line": "AI 助理带来的预订还不到 1%，但流量转化约是 5 倍"
+  },
+  "超时恢复": {
+   "keywords": "工具超时 · 幂等重试 · 状态未知",
+   "tag": "Agent 工程",
+   "tag_color": "teal",
+   "line": "超时不等于失败：先找证据判断状态，再决定补做哪一步"
+  }
+ }
+}

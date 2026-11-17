@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>有智青年 AI市集 · AI市集早报</title>
+<link rel="icon" href="./assets/logo.png">
+<!-- 由 build_index.py 根据各期早报页面自动生成，请勿手改；改样式请改 hub_template.html -->
+<style>
+  :root {
+    --cream: #fef8ec;
+    --paper: #fffdf8;
+    --lime: #c6f432;
+    --lime-wash: #f1fbcf;
+    --ink: #141414;
+    --body: #2e2b26;
+    --muted: #7a7366;
+    --line: rgba(20, 20, 20, .09);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--cream);
+    color: var(--body);
+    font: 16px/1.75 "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  [hidden] { display: none !important; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  .mk { position: relative; z-index: 0; white-space: nowrap; }
+  .mk::after {
+    content: ""; position: absolute; z-index: -1;
+    left: -.06em; right: -.1em; bottom: .04em; height: .26em;
+    border-radius: .2em; background: var(--lime); transform: rotate(-2deg);
+  }
+
+  /* hero（与早报页一致） */
+  .hero { position: relative; overflow: hidden; padding: 44px 0 40px; }
+  .hero::before {
+    content: ""; position: absolute; right: -160px; top: -200px; width: 560px; height: 440px; border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(198, 244, 50, .22), rgba(254, 248, 236, 0) 70%);
+  }
+  .hero .wrap { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: end; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; color: var(--ink); letter-spacing: .04em; }
+  .brand img { height: 38px; }
+  h1 { margin-top: 14px; font-size: clamp(48px, 9vw, 76px); line-height: 1; font-weight: 900; color: var(--ink); letter-spacing: .02em; }
+  .issue {
+    display: inline-block; margin-top: 22px; padding: 7px 22px 7px 18px; background: var(--lime);
+    color: var(--ink); font-weight: 800; font-style: italic; font-size: 18px; letter-spacing: .04em;
+    clip-path: polygon(3% 0, 100% 0, 97% 100%, 0 100%); text-decoration: none;
+  }
+  .hero-sub { margin-left: 14px; font-size: 14px; color: var(--muted); }
+  .quote {
+    position: relative; padding-left: 28px; border-left: 2px solid rgba(20, 20, 20, .14);
+    font-size: 24px; line-height: 1.6; font-weight: 800; color: var(--ink); letter-spacing: .03em; margin-bottom: 6px;
+  }
+
+  /* layout：左侧导航 + 右侧内容 */
+  .layout { display: grid; grid-template-columns: 220px 1fr; gap: 36px; align-items: start; padding-bottom: 20px; }
+  .side { position: sticky; top: 20px; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 18px 14px; }
+  .layout > * { min-width: 0; }
+  .label { font-size: 13px; font-weight: 800; letter-spacing: .12em; color: var(--muted); margin-bottom: 6px; }
+  .side .label { padding: 0 8px; }
+  .side ul { list-style: none; }
+  .side ul + .label { margin-top: 18px; }
+  .nav-issues a, .rb {
+    display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px; border-radius: 12px; border: 0; background: none;
+    font: inherit; font-size: 15px; color: var(--body); text-decoration: none; cursor: pointer; text-align: left; transition: background .15s;
+  }
+  .nav-issues a:hover, .rb:hover { background: var(--lime-wash); }
+  .nav-issues a[aria-current="true"], .rb[aria-pressed="true"] { background: var(--lime); color: var(--ink); font-weight: 800; }
+  .ni-no { font-weight: 800; color: var(--ink); white-space: nowrap; }
+  .ni-date { margin-left: auto; font-size: 13px; color: var(--muted); white-space: nowrap; }
+  [aria-current="true"] .ni-date { color: var(--ink); }
+  .rb .c { margin-left: auto; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .rb[aria-pressed="true"] .c { color: var(--ink); }
+
+  /* intro */
+  .note { background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 22px 26px; }
+  .note p { color: var(--body); }
+
+  section + section { margin-top: 44px; }
+  .sec-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .sec-h h2 { font-size: 22px; font-weight: 900; color: var(--ink); }
+  .sec-h span { font-size: 13px; color: var(--muted); }
+  .issue.sm { margin-top: 0; font-size: 17px; }
+  .open { flex: none; font-size: 15px; font-weight: 800; color: var(--ink); text-decoration: none; border-bottom: 2px solid var(--lime); }
+  .open:hover { background: var(--lime-wash); }
+  .note + .outline { margin-top: 14px; }
+  .filter-h { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
+  .filter-h h2 { font-size: 22px; font-weight: 900; color: var(--ink); }
+  .filter-h span { font-size: 13px; color: var(--muted); }
+  .empty { padding: 40px 0; text-align: center; color: var(--muted); }
+
+  /* outline（与早报页一致） */
+  .outline { list-style: none; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
+  .outline li + li { border-top: 1px solid var(--line); }
+  .outline li.hide { display: none; }
+  .outline li.first-vis { border-top: 0; }
+  .outline a { display: grid; grid-template-columns: 44px 1fr 150px; gap: 6px 16px; padding: 18px 22px; text-decoration: none; transition: background .15s; }
+  .outline .roles { align-self: center; }
+  .roles { display: inline-flex; align-items: center; gap: 5px; flex-wrap: nowrap; }
+  .roles-l { font-size: 12px; color: var(--muted); margin-right: 2px; white-space: nowrap; }
+  .role { display: inline-block; padding: 0 8px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 22px; white-space: nowrap; }
+  .r-product { background: #e6edfd; color: #2c52c0; }
+  .r-dev { background: #ece7fb; color: #5b3fbf; }
+  .r-ops { background: #fde6ee; color: #b52f5c; }
+  .outline a:hover { background: var(--lime-wash); }
+  .no { font: 900 20px/1.4 "Bahnschrift", "DIN Alternate", "Noto Sans SC", sans-serif; color: var(--ink); }
+  .ol-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .ol-name { font-weight: 800; font-size: 17px; color: var(--ink); line-height: 1.4; }
+  .ol-kw { font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .ol-line { font-size: 14px; color: var(--body); line-height: 1.6; }
+  .ol-line .tag { margin-right: 8px; }
+  .tag { display: inline-block; padding: 1px 9px; border-radius: 6px; font-size: 12px; font-weight: 700; line-height: 20px; vertical-align: 1px; white-space: nowrap; }
+  .t-green { background: #dff5e3; color: #1f7a3a; }
+  .t-lime { background: #ecf6c8; color: #5d7a08; }
+  .t-teal { background: #d9f3ef; color: #127a6c; }
+  .t-orange { background: #ffe8d6; color: #b4541a; }
+  .t-yellow { background: #fff1c4; color: #8a6400; }
+
+  .end { margin: 56px 0 40px; text-align: center; color: var(--muted); font-size: 13px; }
+  .end .brand { justify-content: center; font-size: 15px; margin-bottom: 6px; }
+  .end .brand img { height: 28px; }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; gap: 24px; }
+    .side { position: static; padding: 14px 12px; }
+    .side ul { display: flex; flex-wrap: wrap; gap: 6px; }
+    .side ul::-webkit-scrollbar { display: none; }
+    .side ul + .label { margin-top: 12px; }
+    .nav-issues a, .rb { width: auto; white-space: nowrap; padding: 6px 12px; background: var(--cream); }
+    .ni-date { margin-left: 4px; }
+    .rb .c { margin-left: 4px; }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 0 16px; }
+    .hero { padding: 28px 0 28px; }
+    .hero .wrap { grid-template-columns: 1fr; gap: 26px; }
+    .quote { font-size: 20px; padding-left: 18px; }
+    .issue { font-size: 16px; }
+    .issue.sm { font-size: 15px; }
+    .hero-sub { display: block; margin: 8px 0 0; }
+    .note { border-radius: 18px; padding: 18px 18px; }
+    .outline a { grid-template-columns: 34px 1fr; padding: 16px 16px; }
+    .outline .roles { grid-column: 2; justify-self: start; }
+    section + section { margin-top: 34px; }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="brand"><img src="./assets/logo.png" alt="">有智青年 AI市集</div>
+      <h1>AI市集<span class="mk">早报</span></h1>
+      <a class="issue" href="{{LATEST_HREF}}">{{LATEST_LABEL}}</a><span class="hero-sub">共 {{ISSUE_COUNT}} 期 · {{ITEM_COUNT}} 条</span>
+    </div>
+    <blockquote class="quote">把重复的交给 AI，<br>把<span class="mk">判断</span>留给自己。</blockquote>
+  </div>
+</header>
+
+<div class="wrap layout">
+  <nav class="side" aria-label="早报导航">
+    <div class="label">按时间</div>
+    <ul class="nav-issues">
+      <li><a href="#" data-issue="" aria-current="true"><span class="ni-no">全部期数</span><span class="ni-date">{{ISSUE_COUNT}} 期</span></a></li>
+{{NAV_ISSUES}}
+    </ul>
+    <div class="label">按岗位</div>
+    <ul class="nav-roles">
+{{NAV_ROLES}}
+    </ul>
+  </nav>
+
+  <main>
+    <div class="filter-h"><h2 id="viewTitle">全部早报</h2><span>点一条，进入早报看全文</span></div>
+{{SECTIONS}}
+    <p class="empty" id="empty" hidden>这里还没有内容</p>
+  </main>
+</div>
+
+<footer class="end wrap">
+  <div class="brand"><img src="./assets/logo.png" alt="">有智青年 AI市集</div>
+  <div>AI市集早报 · 每周更新</div>
+</footer>
+
+<script>
+(function () {
+  var ROLE = { product: '产品', dev: '开发', ops: '运营' };
+  var state = { issue: '', role: '' };
+  function parse() {
+    var s = { issue: '', role: '' };
+    location.hash.replace(/^#/, '').split('&').forEach(function (kv) {
+      var p = kv.split('='); if (p[0] === 'issue' || p[0] === 'role') s[p[0]] = decodeURIComponent(p[1] || '');
+    });
+    if (!ROLE[s.role]) s.role = '';
+    return s;
+  }
+  function write() {
+    var parts = [];
+    if (state.issue) parts.push('issue=' + state.issue);
+    if (state.role) parts.push('role=' + state.role);
+    history.replaceState(null, '', parts.length ? '#' + parts.join('&') : location.pathname);
+    render();
+  }
+  function render() {
+    var shown = 0, issueLabel = '';
+    document.querySelectorAll('.nav-issues a').forEach(function (a) {
+      var on = a.dataset.issue === state.issue; a.setAttribute('aria-current', String(on));
+      if (on && state.issue) issueLabel = a.querySelector('.ni-no').textContent;
+    });
+    document.querySelectorAll('.rb').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.role === state.role)); });
+    document.querySelectorAll('.issue-sec').forEach(function (sec) {
+      var vis = 0;
+      var issueOk = !state.issue || sec.dataset.issue === state.issue;
+      sec.querySelectorAll('.outline li').forEach(function (li) {
+        var ok = issueOk && (!state.role || li.dataset.roles.split(' ').indexOf(state.role) >= 0);
+        li.classList.toggle('hide', !ok); li.classList.remove('first-vis');
+        if (ok && !vis) li.classList.add('first-vis');
+        if (ok) vis++;
+      });
+      sec.hidden = !vis; shown += vis;
+      sec.querySelector('.note').hidden = !!state.role;
+    });
+    document.getElementById('empty').hidden = shown > 0;
+    var t = issueLabel || '全部早报';
+    if (state.role) t = (issueLabel ? issueLabel + ' · ' : '') + '推荐给' + ROLE[state.role] + '（' + shown + ' 条）';
+    document.getElementById('viewTitle').textContent = t;
+  }
+  document.querySelector('.nav-issues').addEventListener('click', function (e) {
+    var a = e.target.closest('a'); if (!a) return; e.preventDefault();
+    state.issue = a.dataset.issue; write(); window.scrollTo({ top: document.querySelector('.layout').offsetTop - 12 });
+  });
+  document.querySelector('.nav-roles').addEventListener('click', function (e) {
+    var b = e.target.closest('.rb'); if (!b) return; state.role = b.dataset.role; write();
+  });
+  window.addEventListener('hashchange', function () { state = parse(); render(); });
+  state = parse(); render();
+})();
+</script>
+</body>
+</html>
