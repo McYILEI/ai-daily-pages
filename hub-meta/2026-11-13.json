@@ -40,13 +40,17 @@
    "keywords": "黄东旭 · 低延迟模型 · 即时生成界面",
    "tag": "Agent 工程",
    "tag_color": "teal",
-   "line": "模型快十倍之后，后台任务会变成边聊边出的实时交互"
+   "line": "模型快十倍之后，后台任务会变成边聊边出的实时交互",
+   "cover_stat": "1 分钟 → 8 秒",
+   "cover_line": "如果模型再快十倍"
   },
   "即梦动效工作室": {
    "keywords": "文字生成动效 · 配音配乐 · 60 秒成片",
    "tag": "内容制作",
    "tag_color": "orange",
-   "line": "一段文字生成带配音和配乐的动效视频，实测约 8.5 分钟出片"
+   "line": "一段文字生成带配音和配乐的动效视频，实测约 8.5 分钟出片",
+   "cover_stat": "60 秒成片约 8.5 分钟",
+   "cover_line": "文字描述 → 代码编排动画"
   },
   "YouArt Desktop": {
    "keywords": "After Effects · CapCut · Blender",
@@ -58,13 +62,17 @@
    "keywords": "财报会 · AI 引流 · 转化率",
    "tag": "旅行+AI",
    "tag_color": "green",
-   "line": "AI 助理带来的预订还不到 1%，但流量转化约是 5 倍"
+   "line": "AI 助理带来的预订还不到 1%，但流量转化约是 5 倍",
+   "cover_stat": "转化 ≈ 5 倍",
+   "cover_line": "AI 引流 < 1% 间夜"
   },
   "超时恢复": {
    "keywords": "工具超时 · 幂等重试 · 状态未知",
    "tag": "Agent 工程",
    "tag_color": "teal",
-   "line": "超时不等于失败：先找证据判断状态，再决定补做哪一步"
+   "line": "超时不等于失败：先找证据判断状态，再决定补做哪一步",
+   "cover_stat": "超时 ≠ 失败",
+   "cover_line": "先找证据，再决定补做哪一步"
   }
  }
 }

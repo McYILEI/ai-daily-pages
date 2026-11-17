@@ -58,96 +58,106 @@
     font-size: 24px; line-height: 1.6; font-weight: 800; color: var(--ink); letter-spacing: .03em; margin-bottom: 6px;
   }
 
-  /* layout：左侧导航 + 右侧内容 */
-  .layout { display: grid; grid-template-columns: 220px 1fr; gap: 36px; align-items: start; padding-bottom: 20px; }
-  .side { position: sticky; top: 20px; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 18px 14px; }
-  .layout > * { min-width: 0; }
-  .label { font-size: 13px; font-weight: 800; letter-spacing: .12em; color: var(--muted); margin-bottom: 6px; }
-  .side .label { padding: 0 8px; }
-  .side ul { list-style: none; }
-  .side ul + .label { margin-top: 18px; }
-  .nav-issues a, .rb {
-    display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px; border-radius: 12px; border: 0; background: none;
-    font: inherit; font-size: 15px; color: var(--body); text-decoration: none; cursor: pointer; text-align: left; transition: background .15s;
+  /* 搜索 + 筛选 */
+  .intro { max-width: 640px; margin-top: 16px; font-size: 16px; color: var(--muted); }
+  .tools { display: flex; flex-direction: column; gap: 14px; }
+  .search { position: relative; }
+  .search input {
+    width: 100%; height: 54px; padding: 0 20px 0 50px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--paper); font: inherit; font-size: 16px; color: var(--ink); outline: none; transition: border-color .15s, box-shadow .15s;
   }
-  .nav-issues a:hover, .rb:hover { background: var(--lime-wash); }
-  .nav-issues a[aria-current="true"], .rb[aria-pressed="true"] { background: var(--lime); color: var(--ink); font-weight: 800; }
-  .ni-no { font-weight: 800; color: var(--ink); white-space: nowrap; }
-  .ni-date { margin-left: auto; font-size: 13px; color: var(--muted); white-space: nowrap; }
-  [aria-current="true"] .ni-date { color: var(--ink); }
-  .rb .c { margin-left: auto; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .rb[aria-pressed="true"] .c { color: var(--ink); }
+  .search input:focus { border-color: var(--ink); box-shadow: 0 0 0 4px rgba(198, 244, 50, .55); }
+  .search svg { position: absolute; left: 19px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 16px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--paper); font: inherit; font-size: 15px; font-weight: 700; color: var(--body); cursor: pointer; transition: background .15s;
+  }
+  .pill:hover { background: var(--lime-wash); }
+  .pill[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .pill .c { font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .pill[aria-pressed="true"] .c { color: var(--lime); }
+  .time { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: var(--muted); }
+  .time select {
+    height: 38px; padding: 0 34px 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper);
+    font: inherit; font-size: 15px; font-weight: 700; color: var(--ink); cursor: pointer; appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%), linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+    background-position: calc(100% - 18px) 16px, calc(100% - 13px) 16px; background-size: 5px 5px; background-repeat: no-repeat;
+  }
+  .count { margin: 26px 0 14px; font-size: 14px; color: var(--muted); }
+  .count b { color: var(--ink); font-weight: 900; }
 
-  /* intro */
-  .note { background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 22px 26px; }
-  .note p { color: var(--body); }
+  /* 卡片网格 */
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .card { position: relative; display: flex; flex-direction: column; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; transition: transform .15s, box-shadow .15s; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px -18px rgba(20, 20, 20, .35); }
+  .card-link { display: block; text-decoration: none; }
+  .cover { aspect-ratio: 16 / 9; border-bottom: 1px solid var(--line); overflow: hidden; }
+  .cover.img { background: var(--cream); }
+  .cover.img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover.type {
+    position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; padding: 18px 20px;
+    background: radial-gradient(ellipse at 100% 0, rgba(198, 244, 50, .55), rgba(241, 251, 207, 0) 60%), var(--lime-wash);
+  }
+  .cv-no { position: absolute; top: 14px; left: 18px; font: 900 15px/1 "Bahnschrift", "DIN Alternate", sans-serif; color: var(--ink); background: var(--lime); padding: 6px 9px; border-radius: 8px; }
+  .cv-stat { font-size: 26px; line-height: 1.25; font-weight: 900; color: var(--ink); }
+  .cv-line { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .card-body { flex: 1; padding: 16px 20px 6px; }
+  .card-tags { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .card h3 { margin-top: 10px; font-size: 19px; line-height: 1.4; font-weight: 900; color: var(--ink); }
+  .kw { margin-top: 4px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .sum { margin-top: 8px; font-size: 14px; line-height: 1.65; color: var(--body); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 20px 0; padding: 12px 0 16px; border-top: 1px dashed var(--line); }
+  .meta { font-size: 12px; color: var(--muted); }
+  .go { flex: none; padding: 5px 14px; border-radius: 999px; background: var(--lime); color: var(--ink); font-size: 14px; font-weight: 800; text-decoration: none; }
+  .go:hover { background: var(--ink); color: var(--lime); }
+  .card.hide { display: none; }
+  .empty { padding: 60px 0; text-align: center; color: var(--muted); }
 
-  section + section { margin-top: 44px; }
-  .sec-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-  .sec-h h2 { font-size: 22px; font-weight: 900; color: var(--ink); }
-  .sec-h span { font-size: 13px; color: var(--muted); }
-  .issue.sm { margin-top: 0; font-size: 17px; }
-  .open { flex: none; font-size: 15px; font-weight: 800; color: var(--ink); text-decoration: none; border-bottom: 2px solid var(--lime); }
-  .open:hover { background: var(--lime-wash); }
-  .note + .outline { margin-top: 14px; }
-  .filter-h { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; }
-  .filter-h h2 { font-size: 22px; font-weight: 900; color: var(--ink); }
-  .filter-h span { font-size: 13px; color: var(--muted); }
-  .empty { padding: 40px 0; text-align: center; color: var(--muted); }
-
-  /* outline（与早报页一致） */
-  .outline { list-style: none; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
-  .outline li + li { border-top: 1px solid var(--line); }
-  .outline li.hide { display: none; }
-  .outline li.first-vis { border-top: 0; }
-  .outline a { display: grid; grid-template-columns: 44px 1fr 150px; gap: 6px 16px; padding: 18px 22px; text-decoration: none; transition: background .15s; }
-  .outline .roles { align-self: center; }
-  .roles { display: inline-flex; align-items: center; gap: 5px; flex-wrap: nowrap; }
-  .roles-l { font-size: 12px; color: var(--muted); margin-right: 2px; white-space: nowrap; }
+  .roles { display: inline-flex; align-items: center; gap: 5px; }
   .role { display: inline-block; padding: 0 8px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 22px; white-space: nowrap; }
   .r-product { background: #e6edfd; color: #2c52c0; }
   .r-dev { background: #ece7fb; color: #5b3fbf; }
   .r-ops { background: #fde6ee; color: #b52f5c; }
-  .outline a:hover { background: var(--lime-wash); }
-  .no { font: 900 20px/1.4 "Bahnschrift", "DIN Alternate", "Noto Sans SC", sans-serif; color: var(--ink); }
-  .ol-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-  .ol-name { font-weight: 800; font-size: 17px; color: var(--ink); line-height: 1.4; }
-  .ol-kw { font-size: 14px; color: var(--muted); line-height: 1.5; }
-  .ol-line { font-size: 14px; color: var(--body); line-height: 1.6; }
-  .ol-line .tag { margin-right: 8px; }
-  .tag { display: inline-block; padding: 1px 9px; border-radius: 6px; font-size: 12px; font-weight: 700; line-height: 20px; vertical-align: 1px; white-space: nowrap; }
+  .tag { display: inline-block; padding: 1px 9px; border-radius: 6px; font-size: 12px; font-weight: 700; line-height: 20px; white-space: nowrap; }
   .t-green { background: #dff5e3; color: #1f7a3a; }
   .t-lime { background: #ecf6c8; color: #5d7a08; }
   .t-teal { background: #d9f3ef; color: #127a6c; }
   .t-orange { background: #ffe8d6; color: #b4541a; }
   .t-yellow { background: #fff1c4; color: #8a6400; }
 
+  /* 往期 */
+  .sec-h { display: flex; align-items: baseline; justify-content: space-between; margin: 56px 0 14px; }
+  .sec-h h2 { font-size: 22px; font-weight: 900; color: var(--ink); }
+  .sec-h span { font-size: 13px; color: var(--muted); }
+  .pasts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .past { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; align-items: center; padding: 20px 22px; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; text-decoration: none; transition: background .15s; }
+  .past:hover { background: var(--lime-wash); }
+  .issue.sm { margin-top: 0; font-size: 16px; justify-self: start; }
+  .past-n { font-size: 13px; color: var(--muted); }
+  .past-note { grid-column: 1 / -1; font-size: 14px; color: var(--body); line-height: 1.65; }
+  .past-go { grid-column: 1 / -1; font-size: 14px; font-weight: 800; color: var(--ink); }
+
   .end { margin: 56px 0 40px; text-align: center; color: var(--muted); font-size: 13px; }
   .end .brand { justify-content: center; font-size: 15px; margin-bottom: 6px; }
   .end .brand img { height: 28px; }
 
-  @media (max-width: 860px) {
-    .layout { grid-template-columns: 1fr; gap: 24px; }
-    .side { position: static; padding: 14px 12px; }
-    .side ul { display: flex; flex-wrap: wrap; gap: 6px; }
-    .side ul::-webkit-scrollbar { display: none; }
-    .side ul + .label { margin-top: 12px; }
-    .nav-issues a, .rb { width: auto; white-space: nowrap; padding: 6px 12px; background: var(--cream); }
-    .ni-date { margin-left: 4px; }
-    .rb .c { margin-left: 4px; }
-  }
+  @media (max-width: 980px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 640px) {
     .wrap { padding: 0 16px; }
-    .hero { padding: 28px 0 28px; }
-    .hero .wrap { grid-template-columns: 1fr; gap: 26px; }
+    .hero { padding: 28px 0 24px; }
+    .hero .wrap { grid-template-columns: 1fr; gap: 22px; }
     .quote { font-size: 20px; padding-left: 18px; }
     .issue { font-size: 16px; }
-    .issue.sm { font-size: 15px; }
     .hero-sub { display: block; margin: 8px 0 0; }
-    .note { border-radius: 18px; padding: 18px 18px; }
-    .outline a { grid-template-columns: 34px 1fr; padding: 16px 16px; }
-    .outline .roles { grid-column: 2; justify-self: start; }
-    section + section { margin-top: 34px; }
+    .grid, .pasts { grid-template-columns: 1fr; }
+    .pills { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+    .pills::-webkit-scrollbar { display: none; }
+    .pill { flex: none; }
+    .bar { flex-direction: column; align-items: stretch; }
+    .time select { flex: 1; }
+    .search input { height: 50px; }
   }
 </style>
 </head>
@@ -157,46 +167,88 @@
     <div>
       <div class="brand"><img src="./assets/logo.png" alt="">有智青年 AI市集</div>
       <h1>AI市集<span class="mk">早报</span></h1>
+      <p class="intro">每期挑出值得看的 AI 新品、玩法和行业动态。按岗位、按期数找，点开任意一条直接读早报全文。</p>
       <a class="issue" href="./27910ffa06d2/">最新 · 11/13 周五 · 第 01 期</a><span class="hero-sub">共 1 期 · 10 条</span>
     </div>
     <blockquote class="quote">把重复的交给 AI，<br>把<span class="mk">判断</span>留给自己。</blockquote>
   </div>
 </header>
 
-<div class="wrap layout">
-  <nav class="side" aria-label="早报导航">
-    <div class="label">按时间</div>
-    <ul class="nav-issues">
-      <li><a href="#" data-issue="" aria-current="true"><span class="ni-no">全部期数</span><span class="ni-date">1 期</span></a></li>
-<li><a href="#issue=2026-11-13" data-issue="2026-11-13"><span class="ni-no">第 01 期</span><span class="ni-date">11/13 周五</span></a></li>
-    </ul>
-    <div class="label">按岗位</div>
-    <ul class="nav-roles">
-<li><button class="rb" data-role="" aria-pressed="true">全部岗位<span class="c">10</span></button></li><li><button class="rb" data-role="product" aria-pressed="false"><span class="role r-product">产品</span><span class="c">7</span></button></li><li><button class="rb" data-role="dev" aria-pressed="false"><span class="role r-dev">开发</span><span class="c">6</span></button></li><li><button class="rb" data-role="ops" aria-pressed="false"><span class="role r-ops">运营</span><span class="c">4</span></button></li>
-    </ul>
-  </nav>
+<main class="wrap">
+  <div class="tools">
+    <label class="search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="搜索标题、关键词或摘要，如 Agent、视频" autocomplete="off">
+    </label>
+    <div class="bar">
+      <div class="pills" role="group" aria-label="按岗位"><button class="pill" data-role="" aria-pressed="true">全部<span class="c">10</span></button><button class="pill" data-role="product" aria-pressed="false">产品<span class="c">7</span></button><button class="pill" data-role="dev" aria-pressed="false">开发<span class="c">6</span></button><button class="pill" data-role="ops" aria-pressed="false">运营<span class="c">4</span></button></div>
+      <label class="time">按时间
+        <select id="issueSel"><option value="">全部期数</option>
+<option value="2026-11-13">第 01 期 · 11/13 周五</option>
+        </select>
+      </label>
+    </div>
+  </div>
+  <p class="count" id="count">找到 <b>10</b> 条</p>
+  <div class="grid" id="grid">
+<article class="card" data-issue="2026-11-13" data-roles="product dev" data-search="agent 订机票 travelport · mastercard · 代订支付 用户授权 批准一次、付款按批准核对，agent 全程看不到卡号 travelport、mastercard 等四家跑通 ai agent 真实订机票：用户在对话里批准一次，付款按这次批准核对，agent 全程看不到卡号 agent 看不到卡号 用户批准 → 付款核对 → 出票">
+<a class="card-link" href="./27910ffa06d2/#s1" aria-label="打开：Agent 订机票"><div class="cover type"><span class="cv-no">01</span><span class="cv-stat">Agent 看不到卡号</span><span class="cv-line">用户批准 → 付款核对 → 出票</span></div></a>
+<div class="card-body"><div class="card-tags"><span class="tag t-green">用户授权</span><span class="roles"><span class="role r-product">产品</span><span class="role r-dev">开发</span></span></div><h3>Agent 订机票</h3><p class="kw">Travelport · Mastercard · 代订支付</p><p class="sum">批准一次、付款按批准核对，Agent 全程看不到卡号</p></div>
+<footer><span class="meta">第 01 期 · 11/13 周五</span><a class="go" href="./27910ffa06d2/#s1">打开 →</a></footer>
+</article>
+<article class="card" data-issue="2026-11-13" data-roles="product dev" data-search="chatgpt dots 直接做 · 先问我 · 交给我做 权限分级 每类动作要不要先问用户，做成了四档规则 chatgpt 的 dots 支持自定义规则：每类动作可以设成“直接做／你说了才做／先问我／交给我做”四档  ">
+<a class="card-link" href="./27910ffa06d2/#s2" aria-label="打开：ChatGPT dots"><div class="cover img"><img src="./assets/covers/2026-11-13-02.jpg" alt="ChatGPT Learn「Control your dot」文档配图" loading="lazy"></div></a>
+<div class="card-body"><div class="card-tags"><span class="tag t-lime">权限分级</span><span class="roles"><span class="role r-product">产品</span><span class="role r-dev">开发</span></span></div><h3>ChatGPT dots</h3><p class="kw">直接做 · 先问我 · 交给我做</p><p class="sum">每类动作要不要先问用户，做成了四档规则</p></div>
+<footer><span class="meta">第 01 期 · 11/13 周五</span><a class="go" href="./27910ffa06d2/#s2">打开 →</a></footer>
+</article>
+<article class="card" data-issue="2026-11-13" data-roles="product dev" data-search="plurai simulation claude code · 数字孪生 · 模拟用户 agent 评测 评测看 agent 实际改了什么，而不是它说了什么 plurai simulation：在 claude code 里一条命令给 agent 搭一个“数字孪生”测试世界，评测看它实际改了什么，而不是它说了什么 ph 11/12 #1 模拟工具 · 模拟用户 · 看状态改动">
+<a class="card-link" href="./27910ffa06d2/#s3" aria-label="打开：Plurai Simulation"><div class="cover type"><span class="cv-no">03</span><span class="cv-stat">PH 11/12 #1</span><span class="cv-line">模拟工具 · 模拟用户 · 看状态改动</span></div></a>
+<div class="card-body"><div class="card-tags"><span class="tag t-teal">Agent 评测</span><span class="roles"><span class="role r-product">产品</span><span class="role r-dev">开发</span></span></div><h3>Plurai Simulation</h3><p class="kw">Claude Code · 数字孪生 · 模拟用户</p><p class="sum">评测看 Agent 实际改了什么，而不是它说了什么</p></div>
+<footer><span class="meta">第 01 期 · 11/13 周五</span><a class="go" href="./27910ffa06d2/#s3">打开 →</a></footer>
+</article>
+<article class="card" data-issue="2026-11-13" data-roles="product" data-search="united 限制第三方 agent 官网 · app · 代订 平台规则 未经授权的 ai agent 不能代订，旅行社和聚合平台也一样 united 限制未经授权的第三方 ai agent 访问官网和 app，旅行社和聚合平台也不能用这类 agent 代订  ">
+<a class="card-link" href="./27910ffa06d2/#s4" aria-label="打开：United 限制第三方 Agent"><div class="cover img"><img src="./assets/covers/2026-11-13-04.jpg" alt="United 帮助中心「第三方 AI Agent」页面配图" loading="lazy"></div></a>
+<div class="card-body"><div class="card-tags"><span class="tag t-orange">平台规则</span><span class="roles"><span class="role r-product">产品</span></span></div><h3>United 限制第三方 Agent</h3><p class="kw">官网 · App · 代订</p><p class="sum">未经授权的 AI Agent 不能代订，旅行社和聚合平台也一样</p></div>
+<footer><span class="meta">第 01 期 · 11/13 周五</span><a class="go" href="./27910ffa06d2/#s4">打开 →</a></footer>
+</article>
+<article class="card" data-issue="2026-11-13" data-roles="product ops" data-search="商旅 agent otto claude · chatgpt · mcp 商旅预订 过半预订已经从 claude 和 chatgpt 里直接发起 商旅 agent otto：过半预订已经从 claude 和 chatgpt 里发起，用户通过 mcp 连接器直接订机票、酒店和租车 过半预订 claude · chatgpt · slack · whatsapp">
+<a class="card-link" href="./27910ffa06d2/#s5" aria-label="打开：商旅 Agent Otto"><div class="cover type"><span class="cv-no">05</span><span class="cv-stat">过半预订</span><span class="cv-line">Claude · ChatGPT · Slack · WhatsApp</span></div></a>
+<div class="card-body"><div class="card-tags"><span class="tag t-yellow">商旅预订</span><span class="roles"><span class="role r-product">产品</span><span class="role r-ops">运营</span></span></div><h3>商旅 Agent Otto</h3><p class="kw">Claude · ChatGPT · MCP</p><p class="sum">过半预订已经从 Claude 和 ChatGPT 里直接发起</p></div>
+<footer><span class="meta">第 01 期 · 11/13 周五</span><a class="go" href="./27910ffa06d2/#s5">打开 →</a></footer>
+</article>
+<article class="card" data-issue="2026-11-13" data-roles="product dev" data-search="founder park 黄东旭 · 低延迟模型 · 即时生成界面 agent 工程 模型快十倍之后，后台任务会变成边聊边出的实时交互 founder park 转载黄东旭：模型够聪明之后，速度会改变产品形态，比如规划周末出游时当场生成一个能操作的比较界面 1 分钟 → 8 秒 如果模型再快十倍">
+<a class="card-link" href="./27910ffa06d2/#:~:text=Founder%20Park" aria-label="打开：Founder Park"><div class="cover type"><span class="cv-no">06</span><span class="cv-stat">1 分钟 → 8 秒</span><span class="cv-line">如果模型再快十倍</span></div></a>
+<div class="card-body"><div class="card-tags"><span class="tag t-teal">Agent 工程</span><span class="roles"><span class="role r-product">产品</span><span class="role r-dev">开发</span></span></div><h3>Founder Park</h3><p class="kw">黄东旭 · 低延迟模型 · 即时生成界面</p><p class="sum">模型快十倍之后，后台任务会变成边聊边出的实时交互</p></div>
+<footer><span class="meta">第 01 期 · 11/13 周五</span><a class="go" href="./27910ffa06d2/#:~:text=Founder%20Park">打开 →</a></footer>
+</article>
+<article class="card" data-issue="2026-11-13" data-roles="ops" data-search="即梦动效工作室 文字生成动效 · 配音配乐 · 60 秒成片 内容制作 一段文字生成带配音和配乐的动效视频，实测约 8.5 分钟出片 即梦上线“动效工作室”：一段文字生成带配音和配乐的动效视频，适合活动预告、卖点展示和知识科普 60 秒成片约 8.5 分钟 文字描述 → 代码编排动画">
+<a class="card-link" href="./27910ffa06d2/#:~:text=即梦动效工作室" aria-label="打开：即梦动效工作室"><div class="cover type"><span class="cv-no">07</span><span class="cv-stat">60 秒成片约 8.5 分钟</span><span class="cv-line">文字描述 → 代码编排动画</span></div></a>
+<div class="card-body"><div class="card-tags"><span class="tag t-orange">内容制作</span><span class="roles"><span class="role r-ops">运营</span></span></div><h3>即梦动效工作室</h3><p class="kw">文字生成动效 · 配音配乐 · 60 秒成片</p><p class="sum">一段文字生成带配音和配乐的动效视频，实测约 8.5 分钟出片</p></div>
+<footer><span class="meta">第 01 期 · 11/13 周五</span><a class="go" href="./27910ffa06d2/#:~:text=即梦动效工作室">打开 →</a></footer>
+</article>
+<article class="card" data-issue="2026-11-13" data-roles="dev ops" data-search="youart desktop after effects · capcut · blender 内容制作 直接操作本地剪辑软件的视频制作 agent，ph 日榜第 2 youart desktop：直接在电脑上操作 after effects、capcut 和 blender 的视频制作 agent，本地素材和 slack、gmail 里的反馈汇总到一张画布  ">
+<a class="card-link" href="./27910ffa06d2/#:~:text=YouArt%20Desktop" aria-label="打开：YouArt Desktop"><div class="cover img"><img src="./assets/covers/2026-11-13-08.jpg" alt="YouArt Desktop App 的 Product Hunt 头图" loading="lazy"></div></a>
+<div class="card-body"><div class="card-tags"><span class="tag t-orange">内容制作</span><span class="roles"><span class="role r-dev">开发</span><span class="role r-ops">运营</span></span></div><h3>YouArt Desktop</h3><p class="kw">After Effects · CapCut · Blender</p><p class="sum">直接操作本地剪辑软件的视频制作 Agent，PH 日榜第 2</p></div>
+<footer><span class="meta">第 01 期 · 11/13 周五</span><a class="go" href="./27910ffa06d2/#:~:text=YouArt%20Desktop">打开 →</a></footer>
+</article>
+<article class="card" data-issue="2026-11-13" data-roles="product ops" data-search="phocuswire 财报会 · ai 引流 · 转化率 旅行+ai ai 助理带来的预订还不到 1%，但流量转化约是 5 倍 phocuswire 汇总旅行公司财报会：个人 ai 助理带来的预订还很少，但 ai 来的流量转化更高 转化 ≈ 5 倍 ai 引流 &lt; 1% 间夜">
+<a class="card-link" href="./27910ffa06d2/#:~:text=PhocusWire" aria-label="打开：PhocusWire"><div class="cover type"><span class="cv-no">09</span><span class="cv-stat">转化 ≈ 5 倍</span><span class="cv-line">AI 引流 &lt; 1% 间夜</span></div></a>
+<div class="card-body"><div class="card-tags"><span class="tag t-green">旅行+AI</span><span class="roles"><span class="role r-product">产品</span><span class="role r-ops">运营</span></span></div><h3>PhocusWire</h3><p class="kw">财报会 · AI 引流 · 转化率</p><p class="sum">AI 助理带来的预订还不到 1%，但流量转化约是 5 倍</p></div>
+<footer><span class="meta">第 01 期 · 11/13 周五</span><a class="go" href="./27910ffa06d2/#:~:text=PhocusWire">打开 →</a></footer>
+</article>
+<article class="card" data-issue="2026-11-13" data-roles="dev" data-search="超时恢复 工具超时 · 幂等重试 · 状态未知 agent 工程 超时不等于失败：先找证据判断状态，再决定补做哪一步 论文：工具超时后，agent 不知道上一步到底成没成功，先找证据判断状态，再决定补做哪些步骤，避免重复下单 超时 ≠ 失败 先找证据，再决定补做哪一步">
+<a class="card-link" href="./27910ffa06d2/#:~:text=超时恢复" aria-label="打开：超时恢复"><div class="cover type"><span class="cv-no">10</span><span class="cv-stat">超时 ≠ 失败</span><span class="cv-line">先找证据，再决定补做哪一步</span></div></a>
+<div class="card-body"><div class="card-tags"><span class="tag t-teal">Agent 工程</span><span class="roles"><span class="role r-dev">开发</span></span></div><h3>超时恢复</h3><p class="kw">工具超时 · 幂等重试 · 状态未知</p><p class="sum">超时不等于失败：先找证据判断状态，再决定补做哪一步</p></div>
+<footer><span class="meta">第 01 期 · 11/13 周五</span><a class="go" href="./27910ffa06d2/#:~:text=超时恢复">打开 →</a></footer>
+</article>
+  </div>
+  <p class="empty" id="empty" hidden>没有找到相关内容，换个关键词试试</p>
 
-  <main>
-    <div class="filter-h"><h2 id="viewTitle">全部早报</h2><span>点一条，进入早报看全文</span></div>
-<section class="issue-sec" id="issue-2026-11-13" data-issue="2026-11-13">
-<div class="sec-h"><div class="issue sm">11/13 周五 · 第 01 期</div><a class="open" href="./27910ffa06d2/">查看全文 →</a></div>
-<div class="note"><div class="label">本期导读</div><p>本期的主线是 Agent 代用户办事时的授权：United 限制未经授权的第三方 Agent 代订，Travelport 和 Mastercard 则跑通了一条“用户批准、付款核对”的正规订票链路；ChatGPT dots 把每类动作要不要先问用户做成了四档规则；Plurai 和超时恢复论文提醒我们，评测和恢复都要看 Agent 实际改变了什么，而不是它说了什么。</p></div>
-<ol class="outline">
-<li data-roles="product dev"><a href="./27910ffa06d2/#s1"><span class="no">01</span><span class="ol-main"><span class="ol-name">Agent 订机票</span><span class="ol-kw">Travelport · Mastercard · 代订支付</span><span class="ol-line"><span class="tag t-green">用户授权</span>批准一次、付款按批准核对，Agent 全程看不到卡号</span></span><span class="roles"><span class="roles-l">推荐给</span><span class="role r-product">产品</span><span class="role r-dev">开发</span></span></a></li>
-<li data-roles="product dev"><a href="./27910ffa06d2/#s2"><span class="no">02</span><span class="ol-main"><span class="ol-name">ChatGPT dots</span><span class="ol-kw">直接做 · 先问我 · 交给我做</span><span class="ol-line"><span class="tag t-lime">权限分级</span>每类动作要不要先问用户，做成了四档规则</span></span><span class="roles"><span class="roles-l">推荐给</span><span class="role r-product">产品</span><span class="role r-dev">开发</span></span></a></li>
-<li data-roles="product dev"><a href="./27910ffa06d2/#s3"><span class="no">03</span><span class="ol-main"><span class="ol-name">Plurai Simulation</span><span class="ol-kw">Claude Code · 数字孪生 · 模拟用户</span><span class="ol-line"><span class="tag t-teal">Agent 评测</span>评测看 Agent 实际改了什么，而不是它说了什么</span></span><span class="roles"><span class="roles-l">推荐给</span><span class="role r-product">产品</span><span class="role r-dev">开发</span></span></a></li>
-<li data-roles="product"><a href="./27910ffa06d2/#s4"><span class="no">04</span><span class="ol-main"><span class="ol-name">United 限制第三方 Agent</span><span class="ol-kw">官网 · App · 代订</span><span class="ol-line"><span class="tag t-orange">平台规则</span>未经授权的 AI Agent 不能代订，旅行社和聚合平台也一样</span></span><span class="roles"><span class="roles-l">推荐给</span><span class="role r-product">产品</span></span></a></li>
-<li data-roles="product ops"><a href="./27910ffa06d2/#s5"><span class="no">05</span><span class="ol-main"><span class="ol-name">商旅 Agent Otto</span><span class="ol-kw">Claude · ChatGPT · MCP</span><span class="ol-line"><span class="tag t-yellow">商旅预订</span>过半预订已经从 Claude 和 ChatGPT 里直接发起</span></span><span class="roles"><span class="roles-l">推荐给</span><span class="role r-product">产品</span><span class="role r-ops">运营</span></span></a></li>
-<li data-roles="product dev"><a href="./27910ffa06d2/#:~:text=Founder%20Park"><span class="no">06</span><span class="ol-main"><span class="ol-name">Founder Park</span><span class="ol-kw">黄东旭 · 低延迟模型 · 即时生成界面</span><span class="ol-line"><span class="tag t-teal">Agent 工程</span>模型快十倍之后，后台任务会变成边聊边出的实时交互</span></span><span class="roles"><span class="roles-l">推荐给</span><span class="role r-product">产品</span><span class="role r-dev">开发</span></span></a></li>
-<li data-roles="ops"><a href="./27910ffa06d2/#:~:text=即梦动效工作室"><span class="no">07</span><span class="ol-main"><span class="ol-name">即梦动效工作室</span><span class="ol-kw">文字生成动效 · 配音配乐 · 60 秒成片</span><span class="ol-line"><span class="tag t-orange">内容制作</span>一段文字生成带配音和配乐的动效视频，实测约 8.5 分钟出片</span></span><span class="roles"><span class="roles-l">推荐给</span><span class="role r-ops">运营</span></span></a></li>
-<li data-roles="dev ops"><a href="./27910ffa06d2/#:~:text=YouArt%20Desktop"><span class="no">08</span><span class="ol-main"><span class="ol-name">YouArt Desktop</span><span class="ol-kw">After Effects · CapCut · Blender</span><span class="ol-line"><span class="tag t-orange">内容制作</span>直接操作本地剪辑软件的视频制作 Agent，PH 日榜第 2</span></span><span class="roles"><span class="roles-l">推荐给</span><span class="role r-dev">开发</span><span class="role r-ops">运营</span></span></a></li>
-<li data-roles="product ops"><a href="./27910ffa06d2/#:~:text=PhocusWire"><span class="no">09</span><span class="ol-main"><span class="ol-name">PhocusWire</span><span class="ol-kw">财报会 · AI 引流 · 转化率</span><span class="ol-line"><span class="tag t-green">旅行+AI</span>AI 助理带来的预订还不到 1%，但流量转化约是 5 倍</span></span><span class="roles"><span class="roles-l">推荐给</span><span class="role r-product">产品</span><span class="role r-ops">运营</span></span></a></li>
-<li data-roles="dev"><a href="./27910ffa06d2/#:~:text=超时恢复"><span class="no">10</span><span class="ol-main"><span class="ol-name">超时恢复</span><span class="ol-kw">工具超时 · 幂等重试 · 状态未知</span><span class="ol-line"><span class="tag t-teal">Agent 工程</span>超时不等于失败：先找证据判断状态，再决定补做哪一步</span></span><span class="roles"><span class="roles-l">推荐给</span><span class="role r-dev">开发</span></span></a></li>
-</ol>
-</section>
-    <p class="empty" id="empty" hidden>这里还没有内容</p>
-  </main>
-</div>
+  <div class="sec-h"><h2>往期早报</h2><span>按时间从新到旧</span></div>
+  <div class="pasts">
+<a class="past" href="./27910ffa06d2/"><span class="issue sm">11/13 周五 · 第 01 期</span><span class="past-n">10 条</span><span class="past-note">本期的主线是 Agent 代用户办事时的授权：United 限制未经授权的第三方 Agent 代订，Travelport 和 Master…</span><span class="past-go">查看全文 →</span></a>
+  </div>
+</main>
 
 <footer class="end wrap">
   <div class="brand"><img src="./assets/logo.png" alt="">有智青年 AI市集</div>
@@ -205,54 +257,43 @@
 
 <script>
 (function () {
-  var ROLE = { product: '产品', dev: '开发', ops: '运营' };
-  var state = { issue: '', role: '' };
+  var ROLES = ['product', 'dev', 'ops'];
+  var q = document.getElementById('q'), sel = document.getElementById('issueSel');
+  var cards = [].slice.call(document.querySelectorAll('.card'));
+  var state = { role: '', issue: '', q: '' };
   function parse() {
-    var s = { issue: '', role: '' };
+    var s = { role: '', issue: '', q: '' };
     location.hash.replace(/^#/, '').split('&').forEach(function (kv) {
-      var p = kv.split('='); if (p[0] === 'issue' || p[0] === 'role') s[p[0]] = decodeURIComponent(p[1] || '');
+      var p = kv.split('='); if (p[0] in s) s[p[0]] = decodeURIComponent(p[1] || '');
     });
-    if (!ROLE[s.role]) s.role = '';
+    if (ROLES.indexOf(s.role) < 0) s.role = '';
+    if (!sel.querySelector('option[value="' + s.issue + '"]')) s.issue = '';
     return s;
   }
   function write() {
     var parts = [];
-    if (state.issue) parts.push('issue=' + state.issue);
-    if (state.role) parts.push('role=' + state.role);
+    ['role', 'issue', 'q'].forEach(function (k) { if (state[k]) parts.push(k + '=' + encodeURIComponent(state[k])); });
     history.replaceState(null, '', parts.length ? '#' + parts.join('&') : location.pathname);
     render();
   }
   function render() {
-    var shown = 0, issueLabel = '';
-    document.querySelectorAll('.nav-issues a').forEach(function (a) {
-      var on = a.dataset.issue === state.issue; a.setAttribute('aria-current', String(on));
-      if (on && state.issue) issueLabel = a.querySelector('.ni-no').textContent;
+    var words = state.q.toLowerCase().split(/\s+/).filter(Boolean), n = 0;
+    cards.forEach(function (c) {
+      var ok = (!state.role || c.dataset.roles.split(' ').indexOf(state.role) >= 0)
+        && (!state.issue || c.dataset.issue === state.issue)
+        && words.every(function (w) { return c.dataset.search.indexOf(w) >= 0; });
+      c.classList.toggle('hide', !ok); if (ok) n++;
     });
-    document.querySelectorAll('.rb').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.role === state.role)); });
-    document.querySelectorAll('.issue-sec').forEach(function (sec) {
-      var vis = 0;
-      var issueOk = !state.issue || sec.dataset.issue === state.issue;
-      sec.querySelectorAll('.outline li').forEach(function (li) {
-        var ok = issueOk && (!state.role || li.dataset.roles.split(' ').indexOf(state.role) >= 0);
-        li.classList.toggle('hide', !ok); li.classList.remove('first-vis');
-        if (ok && !vis) li.classList.add('first-vis');
-        if (ok) vis++;
-      });
-      sec.hidden = !vis; shown += vis;
-      sec.querySelector('.note').hidden = !!state.role;
-    });
-    document.getElementById('empty').hidden = shown > 0;
-    var t = issueLabel || '全部早报';
-    if (state.role) t = (issueLabel ? issueLabel + ' · ' : '') + '推荐给' + ROLE[state.role] + '（' + shown + ' 条）';
-    document.getElementById('viewTitle').textContent = t;
+    document.querySelectorAll('.pill').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.role === state.role)); });
+    sel.value = state.issue; if (q.value !== state.q) q.value = state.q;
+    document.getElementById('count').innerHTML = '找到 <b>' + n + '</b> 条';
+    document.getElementById('empty').hidden = n > 0;
   }
-  document.querySelector('.nav-issues').addEventListener('click', function (e) {
-    var a = e.target.closest('a'); if (!a) return; e.preventDefault();
-    state.issue = a.dataset.issue; write(); window.scrollTo({ top: document.querySelector('.layout').offsetTop - 12 });
+  document.querySelector('.pills').addEventListener('click', function (e) {
+    var b = e.target.closest('.pill'); if (b) { state.role = b.dataset.role; write(); }
   });
-  document.querySelector('.nav-roles').addEventListener('click', function (e) {
-    var b = e.target.closest('.rb'); if (!b) return; state.role = b.dataset.role; write();
-  });
+  sel.addEventListener('change', function () { state.issue = sel.value; write(); });
+  q.addEventListener('input', function () { state.q = q.value.trim(); write(); });
   window.addEventListener('hashchange', function () { state = parse(); render(); });
   state = parse(); render();
 })();

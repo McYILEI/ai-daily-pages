@@ -43,6 +43,42 @@ def roles_in(fragment):
     return [r for r in found if r]
 
 
+def cover_of(body):
+    """条目的配图（页面里内嵌的图片）或者要点数字（gist），给卡片封面用。"""
+    out = {}
+    img = re.search(r'<img src="(data:image/(\w+);base64,([^"]+))" alt="([^"]*)"', body)
+    if img:
+        out['img_b64'], out['img_alt'] = img.group(3), text(img.group(4))
+    else:
+        url = re.search(r'<img src="((?:https?:)?[^"]+)" alt="([^"]*)"', body)
+        if url:
+            out['img_url'], out['img_alt'] = url.group(1), text(url.group(2))
+    g = re.search(r'<div class="gist-stat">(.*?)</div>\s*<div class="gist-line">(.*?)</div>', body, re.S)
+    if g:
+        out['cover_stat'], out['cover_line'] = text(g.group(1)), text(g.group(2))
+    return out
+
+
+def save_cover(date, no, b64):
+    """把内嵌图片存成 assets/covers/<日期>-<编号>.jpg（宽 720），已存在就跳过。"""
+    import base64, io
+    rel = 'assets/covers/%s-%s.jpg' % (date, no)
+    path = os.path.join(ROOT, rel)
+    if not os.path.isfile(path):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        raw = base64.b64decode(b64)
+        try:
+            from PIL import Image
+            im = Image.open(io.BytesIO(raw)).convert('RGB')
+            im.thumbnail((720, 720))
+            im.save(path, 'JPEG', quality=84, optimize=True)
+        except ImportError:
+            rel = rel[:-4] + '.img'
+            with open(os.path.join(ROOT, rel), 'wb') as f:
+                f.write(raw)
+    return './' + rel
+
+
 def slug_dates():
     out = {}
     for f in os.listdir(ROOT):
@@ -77,6 +113,7 @@ def parse_issue(slug, h, date_hint):
             'line': text(tag.group(3)) if tag else '',
             'roles': roles_in(body),
         }
+    h = h.split('<footer class="end"')[0]
     items = []
     for sid, body in re.findall(r'<article class="story" id="([\w-]+)">(.*?)</article>', h, re.S):
         o = outline.get(sid, {})
@@ -92,8 +129,11 @@ def parse_issue(slug, h, date_hint):
             'color': o.get('color') or (tag.group(1) if tag else 'lime'),
             'line': o.get('line') or clip(st_title, 36),
             'roles': roles_in(head) or o.get('roles') or [],
+            'title': st_title,
+            **cover_of(body),
         })
-    for body in re.findall(r'<details class="more">\s*<summary>(.*?)</summary>', h, re.S):
+    for summ, mbody in re.findall(r'<details class="more">\s*<summary>(.*?)</summary>(.*?)</details>', h, re.S):
+        body = summ
         nm = re.search(r'<span class="mo-name">(.*?)<span class="roles">', body, re.S)
         name = clean_name(nm.group(1) if nm else '')
         mt = text((re.search(r'<span class="mo-title">(.*?)</span>', body, re.S) or [None, ''])[1])
@@ -101,7 +141,8 @@ def parse_issue(slug, h, date_hint):
         items.append({
             'anchor': '#:~:text=' + re.sub(r'[\s&,-]', lambda m: '%%%02X' % ord(m.group()), name),
             'no': '%02d' % (len(items) + 1), 'name': name, 'keywords': '', 'tag': '', 'color': 'yellow',
-            'line': clip(line, 36), 'roles': roles_in(body),
+            'line': clip(line, 36), 'roles': roles_in(body), 'title': mt,
+            **cover_of(mbody),
         })
     for i, it in enumerate(items):
         it['no'] = it['no'] or '%02d' % (i + 1)
@@ -113,6 +154,9 @@ def parse_issue(slug, h, date_hint):
         for it in items:
             m = next((v for k, v in meta.items() if k and k in it['name']), None)
             if m:
+                for k in ('cover_stat', 'cover_line'):
+                    if m.get(k) and not it.get(k):
+                        it[k] = m[k]
                 for k_src, k_dst in (('keywords', 'keywords'), ('tag', 'tag'), ('tag_color', 'color'), ('line', 'line')):
                     if m.get(k_src) and not (k_dst in ('keywords', 'tag', 'line') and it[k_dst] and it['anchor'].startswith('#s')):
                         it[k_dst] = m[k_src]
@@ -152,8 +196,20 @@ def short_date(date):
 
 
 def roles_html(roles):
-    return '<span class="roles"><span class="roles-l">推荐给</span>%s</span>' % ''.join(
+    return '<span class="roles">%s</span>' % ''.join(
         '<span class="role r-%s">%s</span>' % (k, ROLE_NAME[k]) for k in roles)
+
+
+def cover_html(it, date):
+    if it.get('img_b64'):
+        src = save_cover(date, it['no'], it['img_b64'])
+        return '<div class="cover img"><img src="%s" alt="%s" loading="lazy"></div>' % (esc(src), esc(it.get('img_alt', '')))
+    if it.get('img_url'):
+        return '<div class="cover img"><img src="%s" alt="%s" loading="lazy"></div>' % (esc(it['img_url']), esc(it.get('img_alt', '')))
+    stat = it.get('cover_stat') or it.get('tag') or it['name']
+    line = it.get('cover_line') or it.get('keywords') or ''
+    return ('<div class="cover type"><span class="cv-no">%s</span><span class="cv-stat">%s</span>'
+            '<span class="cv-line">%s</span></div>' % (esc(it['no']), esc(stat), esc(line)))
 
 
 def build():
@@ -161,40 +217,44 @@ def build():
     if not issues:
         sys.exit('没有找到任何新版早报页面')
     counts = {k: 0 for k, _ in ROLES}
-    nav, sections = [], []
+    cards, options, past = [], [], []
     for iss in issues:
         date, href = iss['date'], './%s/' % iss['slug']
-        label = '%s %s · 第 %02d 期' % (short_date(date), weekday(date), iss['no'])
-        rows = []
+        wd = weekday(date)
+        label = '第 %02d 期 · %s %s' % (iss['no'], short_date(date), wd)
+        options.append('<option value="%s">%s</option>' % (date, esc(label)))
+        past.append('<a class="past" href="%s"><span class="issue sm">%s %s · 第 %02d 期</span>'
+                    '<span class="past-n">%d 条</span><span class="past-note">%s</span><span class="past-go">查看全文 →</span></a>'
+                    % (href, short_date(date), wd, iss['no'], len(iss['items']), esc(clip(iss['note'], 70))))
         for it in iss['items']:
             for r in it['roles']:
                 counts[r] += 1
-            kw = '<span class="ol-kw">%s</span>' % esc(it['keywords']) if it['keywords'] else ''
+            search = ' '.join([it['name'], it['keywords'], it['tag'], it['line'], it.get('title', ''),
+                               it.get('cover_stat', ''), it.get('cover_line', '')]).lower()
             tag = '<span class="tag t-%s">%s</span>' % (esc(it['color']), esc(it['tag'])) if it['tag'] else ''
-            rows.append('<li data-roles="%s"><a href="%s%s"><span class="no">%s</span><span class="ol-main">'
-                        '<span class="ol-name">%s</span>%s<span class="ol-line">%s%s</span></span>%s</a></li>'
-                        % (' '.join(it['roles']), href, esc(it['anchor']), esc(it['no']), esc(it['name']), kw,
-                           tag, esc(it['line']), roles_html(it['roles'])))
-        nav.append('<li><a href="#issue=%s" data-issue="%s"><span class="ni-no">第 %02d 期</span>'
-                   '<span class="ni-date">%s %s</span></a></li>' % (date, date, iss['no'], short_date(date), weekday(date)))
-        sections.append(
-            '<section class="issue-sec" id="issue-%s" data-issue="%s">\n'
-            '<div class="sec-h"><div class="issue sm">%s</div><a class="open" href="%s">查看全文 →</a></div>\n'
-            '<div class="note"><div class="label">本期导读</div><p>%s</p></div>\n'
-            '<ol class="outline">\n%s\n</ol>\n</section>'
-            % (date, date, esc(label), href, esc(iss['note']), '\n'.join(rows)))
+            kw = '<p class="kw">%s</p>' % esc(it['keywords']) if it['keywords'] else ''
+            cards.append(
+                '<article class="card" data-issue="%s" data-roles="%s" data-search="%s">\n'
+                '<a class="card-link" href="%s%s" aria-label="打开：%s">%s</a>\n'
+                '<div class="card-body"><div class="card-tags">%s%s</div>'
+                '<h3>%s</h3>%s<p class="sum">%s</p></div>\n'
+                '<footer><span class="meta">第 %02d 期 · %s %s</span><a class="go" href="%s%s">打开 →</a></footer>\n</article>'
+                % (date, ' '.join(it['roles']), esc(search), href, esc(it['anchor']), esc(it['name']),
+                   cover_html(it, date), tag, roles_html(it['roles']), esc(it['name']), kw,
+                   esc(it['line']), iss['no'], short_date(date), wd, href, esc(it['anchor'])))
     latest = issues[0]
-    total = sum(len(i['items']) for i in issues)
-    role_nav = '<li><button class="rb" data-role="" aria-pressed="true">全部岗位<span class="c">%d</span></button></li>' % total
-    role_nav += ''.join('<li><button class="rb" data-role="%s" aria-pressed="false"><span class="role r-%s">%s</span><span class="c">%d</span></button></li>'
-                        % (k, k, n, counts[k]) for k, n in ROLES)
+    total = len(cards)
+    tabs = '<button class="pill" data-role="" aria-pressed="true">全部<span class="c">%d</span></button>' % total
+    tabs += ''.join('<button class="pill" data-role="%s" aria-pressed="false">%s<span class="c">%d</span></button>'
+                    % (k, n, counts[k]) for k, n in ROLES)
     with open(os.path.join(ROOT, 'hub_template.html'), encoding='utf-8') as f:
         tpl = f.read()
     rep = {
         '{{LATEST_LABEL}}': esc('最新 · %s %s · 第 %02d 期' % (short_date(latest['date']), weekday(latest['date']), latest['no'])),
         '{{LATEST_HREF}}': './%s/' % latest['slug'],
         '{{ISSUE_COUNT}}': str(len(issues)), '{{ITEM_COUNT}}': str(total),
-        '{{NAV_ISSUES}}': '\n'.join(nav), '{{NAV_ROLES}}': role_nav, '{{SECTIONS}}': '\n'.join(sections),
+        '{{ROLE_TABS}}': tabs, '{{ISSUE_OPTIONS}}': '\n'.join(options),
+        '{{CARDS}}': '\n'.join(cards), '{{PAST}}': '\n'.join(past),
     }
     for k, v in rep.items():
         tpl = tpl.replace(k, v)
