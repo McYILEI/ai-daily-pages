@@ -71,12 +71,15 @@
   .bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .pills { display: flex; gap: 8px; flex-wrap: wrap; }
   .pill {
-    display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 16px; border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 118px; height: 40px; padding: 0 12px; border-radius: 999px;
     border: 1px solid var(--line); background: var(--paper); font: inherit; font-size: 15px; font-weight: 700; color: var(--body); cursor: pointer; transition: background .15s;
   }
   .pill:hover { background: var(--lime-wash); }
   .pill[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
-  .pill .c { font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .pill .pl { letter-spacing: .02em; }
+  .pill .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .pill[aria-pressed="true"] .dot { box-shadow: 0 0 0 2px #fff; }
+  .pill .c { min-width: 1.4em; text-align: left; font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
   .pill[aria-pressed="true"] .c { color: var(--lime); }
   .time { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: var(--muted); }
   .time select {
@@ -104,7 +107,7 @@
   .cv-stat { font-size: 26px; line-height: 1.25; font-weight: 900; color: var(--ink); }
   .cv-line { font-size: 13px; color: var(--muted); line-height: 1.5; }
   .card-body { flex: 1; padding: 16px 20px 6px; }
-  .card-tags { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .card-tags { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: 24px; overflow: hidden; }
   .card h3 { margin-top: 10px; font-size: 19px; line-height: 1.4; font-weight: 900; color: var(--ink); }
   .kw { margin-top: 4px; font-size: 13px; color: var(--muted); line-height: 1.5; }
   .sum { margin-top: 8px; font-size: 14px; line-height: 1.65; color: var(--body); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -115,12 +118,16 @@
   .card.hide { display: none; }
   .empty { padding: 60px 0; text-align: center; color: var(--muted); }
 
-  .roles { display: inline-flex; align-items: center; gap: 5px; }
-  .role { display: inline-block; padding: 0 8px; border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 22px; white-space: nowrap; }
   .r-product { background: #e6edfd; color: #2c52c0; }
   .r-dev { background: #ece7fb; color: #5b3fbf; }
   .r-ops { background: #fde6ee; color: #b52f5c; }
-  .tag { display: inline-block; padding: 1px 9px; border-radius: 6px; font-size: 12px; font-weight: 700; line-height: 20px; white-space: nowrap; }
+  .tag { display: inline-flex; align-items: center; height: 24px; padding: 0 9px; border-radius: 6px; border: 1px solid var(--line); font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+  .topic { display: inline-flex; align-items: center; justify-content: center; width: 68px; height: 24px; border-radius: 6px; font-size: 12px; font-weight: 800; letter-spacing: .04em; white-space: nowrap; }
+  .tp-travel { background: #dff5e3; color: #1f7a3a; }
+  .tp-agent { background: #ecf6c8; color: #4f6b00; }
+  .tp-harness { background: #d9f3ef; color: #127a6c; }
+  .tp-content { background: #ffe8d6; color: #b4541a; }
+  .dot.tp-travel { background: #2f9e52; } .dot.tp-agent { background: #8fbf00; } .dot.tp-harness { background: #1aa08e; } .dot.tp-content { background: #e2732e; }
   .t-green { background: #dff5e3; color: #1f7a3a; }
   .t-lime { background: #ecf6c8; color: #5d7a08; }
   .t-teal { background: #d9f3ef; color: #127a6c; }
@@ -152,9 +159,9 @@
     .issue { font-size: 16px; }
     .hero-sub { display: block; margin: 8px 0 0; }
     .grid, .pasts { grid-template-columns: 1fr; }
-    .pills { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
-    .pills::-webkit-scrollbar { display: none; }
-    .pill { flex: none; }
+    .pills { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .pill[data-topic=""] { grid-column: 1 / -1; }
+    .pill { width: auto; }
     .bar { flex-direction: column; align-items: stretch; }
     .time select { flex: 1; }
     .search input { height: 50px; }
@@ -167,7 +174,7 @@
     <div>
       <div class="brand"><img src="./assets/logo.png" alt="">有智青年 AI市集</div>
       <h1>AI市集<span class="mk">早报</span></h1>
-      <p class="intro">每期挑出值得看的 AI 新品、玩法和行业动态。按岗位、按期数找，点开任意一条直接读早报全文。</p>
+      <p class="intro">每期挑出值得看的 AI 新品、玩法和行业动态。按话题、按期数找，点开任意一条直接读早报全文。</p>
       <a class="issue" href="{{LATEST_HREF}}">{{LATEST_LABEL}}</a><span class="hero-sub">共 {{ISSUE_COUNT}} 期 · {{ITEM_COUNT}} 条</span>
     </div>
     <blockquote class="quote">把重复的交给 AI，<br>把<span class="mk">判断</span>留给自己。</blockquote>
@@ -181,7 +188,7 @@
       <input id="q" type="search" placeholder="搜索标题、关键词或摘要，如 Agent、视频" autocomplete="off">
     </label>
     <div class="bar">
-      <div class="pills" role="group" aria-label="按岗位">{{ROLE_TABS}}</div>
+      <div class="pills" role="group" aria-label="按话题">{{TOPIC_TABS}}</div>
       <label class="time">按时间
         <select id="issueSel"><option value="">全部期数</option>
 {{ISSUE_OPTIONS}}
@@ -208,40 +215,40 @@
 
 <script>
 (function () {
-  var ROLES = ['product', 'dev', 'ops'];
+  var TOPICS = ['travel', 'agent', 'harness', 'content'];
   var q = document.getElementById('q'), sel = document.getElementById('issueSel');
   var cards = [].slice.call(document.querySelectorAll('.card'));
-  var state = { role: '', issue: '', q: '' };
+  var state = { topic: '', issue: '', q: '' };
   function parse() {
-    var s = { role: '', issue: '', q: '' };
+    var s = { topic: '', issue: '', q: '' };
     location.hash.replace(/^#/, '').split('&').forEach(function (kv) {
       var p = kv.split('='); if (p[0] in s) s[p[0]] = decodeURIComponent(p[1] || '');
     });
-    if (ROLES.indexOf(s.role) < 0) s.role = '';
+    if (TOPICS.indexOf(s.topic) < 0) s.topic = '';
     if (!sel.querySelector('option[value="' + s.issue + '"]')) s.issue = '';
     return s;
   }
   function write() {
     var parts = [];
-    ['role', 'issue', 'q'].forEach(function (k) { if (state[k]) parts.push(k + '=' + encodeURIComponent(state[k])); });
+    ['topic', 'issue', 'q'].forEach(function (k) { if (state[k]) parts.push(k + '=' + encodeURIComponent(state[k])); });
     history.replaceState(null, '', parts.length ? '#' + parts.join('&') : location.pathname);
     render();
   }
   function render() {
     var words = state.q.toLowerCase().split(/\s+/).filter(Boolean), n = 0;
     cards.forEach(function (c) {
-      var ok = (!state.role || c.dataset.roles.split(' ').indexOf(state.role) >= 0)
+      var ok = (!state.topic || c.dataset.topics.split(' ').indexOf(state.topic) >= 0)
         && (!state.issue || c.dataset.issue === state.issue)
         && words.every(function (w) { return c.dataset.search.indexOf(w) >= 0; });
       c.classList.toggle('hide', !ok); if (ok) n++;
     });
-    document.querySelectorAll('.pill').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.role === state.role)); });
+    document.querySelectorAll('.pill').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.topic === state.topic)); });
     sel.value = state.issue; if (q.value !== state.q) q.value = state.q;
     document.getElementById('count').innerHTML = '找到 <b>' + n + '</b> 条';
     document.getElementById('empty').hidden = n > 0;
   }
   document.querySelector('.pills').addEventListener('click', function (e) {
-    var b = e.target.closest('.pill'); if (b) { state.role = b.dataset.role; write(); }
+    var b = e.target.closest('.pill'); if (b) { state.topic = b.dataset.topic; write(); }
   });
   sel.addEventListener('change', function () { state.issue = sel.value; write(); });
   q.addEventListener('input', function () { state.q = q.value.trim(); write(); });

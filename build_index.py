@@ -18,6 +18,11 @@ WEEK = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
 ROLES = [('product', '产品'), ('dev', '开发'), ('ops', '运营')]
 ROLE_NAME = dict(ROLES)
 ROLE_BY_CN = {v: k for k, v in ROLES}
+# 总入口按话题分类（不按岗位）。卡片上只显示一个主话题，按这个优先级取；筛选时条目有的话题都算。
+TOPICS = [('travel', 'AI 出行'), ('agent', 'AI 助理'), ('harness', 'AI 工程'), ('content', 'AI 内容')]
+TOPIC_NAME = dict(TOPICS)
+TOPIC_PRIORITY = ['content', 'travel', 'harness', 'agent']
+ISSUES_DIR = os.environ.get('ISSUES_DIR', '/workspace/ai-innovation-reports/issues')
 EMOJI = re.compile('[\U0001F000-\U0001FAFF\u2600-\u27BF\uFE0F\u200D\u2B00-\u2BFF]+')
 
 
@@ -147,6 +152,7 @@ def parse_issue(slug, h, date_hint):
     for i, it in enumerate(items):
         it['no'] = it['no'] or '%02d' % (i + 1)
         it['roles'] = it['roles'] or ['product']
+    meta = {}
     mp = os.path.join(ROOT, 'hub-meta', date + '.json')
     if os.path.isfile(mp):
         with open(mp, encoding='utf-8') as fh:
@@ -160,6 +166,22 @@ def parse_issue(slug, h, date_hint):
                 for k_src, k_dst in (('keywords', 'keywords'), ('tag', 'tag'), ('tag_color', 'color'), ('line', 'line')):
                     if m.get(k_src) and not (k_dst in ('keywords', 'tag', 'line') and it[k_dst] and it['anchor'].startswith('#s')):
                         it[k_dst] = m[k_src]
+    # 话题：hub-meta 里的 topics 优先，其次是 issues/<日期>.json 里同名条目的 topics
+    src = {}
+    jp = os.path.join(ISSUES_DIR, date + '.json')
+    if os.path.isfile(jp):
+        with open(jp, encoding='utf-8') as fh:
+            for x in json.load(fh).get('items', []):
+                if x.get('name'):
+                    src[x['name']] = x.get('topics') or []
+    for k, v in meta.items():
+        if v.get('topics'):
+            src[k] = v['topics']
+    for it in items:
+        t = next((v for k, v in src.items() if k and k in it['name']), None) or []
+        t = [x for x in t if x in TOPIC_NAME] or ['agent']
+        it['topics'] = t
+        it['topic'] = next(x for x in TOPIC_PRIORITY if x in t)
     return {'slug': slug, 'date': date, 'no': int(no.group(1)) if no else None,
             'note': text(note.group(1)) if note else '', 'items': items}
 
@@ -216,7 +238,7 @@ def build():
     issues = scan()
     if not issues:
         sys.exit('没有找到任何新版早报页面')
-    counts = {k: 0 for k, _ in ROLES}
+    counts = {k: 0 for k, _ in TOPICS}
     cards, options, past = [], [], []
     for iss in issues:
         date, href = iss['date'], './%s/' % iss['slug']
@@ -227,33 +249,35 @@ def build():
                     '<span class="past-n">%d 条</span><span class="past-note">%s</span><span class="past-go">查看全文 →</span></a>'
                     % (href, short_date(date), wd, iss['no'], len(iss['items']), esc(clip(iss['note'], 70))))
         for it in iss['items']:
-            for r in it['roles']:
-                counts[r] += 1
+            for t in it['topics']:
+                counts[t] += 1
             search = ' '.join([it['name'], it['keywords'], it['tag'], it['line'], it.get('title', ''),
                                it.get('cover_stat', ''), it.get('cover_line', '')]).lower()
-            tag = '<span class="tag t-%s">%s</span>' % (esc(it['color']), esc(it['tag'])) if it['tag'] else ''
+            tag = '<span class="tag">%s</span>' % esc(it['tag']) if it['tag'] else ''
+            chip = '<span class="topic tp-%s">%s</span>' % (it['topic'], TOPIC_NAME[it['topic']])
             kw = '<p class="kw">%s</p>' % esc(it['keywords']) if it['keywords'] else ''
             cards.append(
-                '<article class="card" data-issue="%s" data-roles="%s" data-search="%s">\n'
+                '<article class="card" data-issue="%s" data-topics="%s" data-search="%s">\n'
                 '<a class="card-link" href="%s%s" aria-label="打开：%s">%s</a>\n'
                 '<div class="card-body"><div class="card-tags">%s%s</div>'
                 '<h3>%s</h3>%s<p class="sum">%s</p></div>\n'
                 '<footer><span class="meta">第 %02d 期 · %s %s</span><a class="go" href="%s%s">打开 →</a></footer>\n</article>'
-                % (date, ' '.join(it['roles']), esc(search), href, esc(it['anchor']), esc(it['name']),
-                   cover_html(it, date), tag, roles_html(it['roles']), esc(it['name']), kw,
+                % (date, ' '.join(it['topics']), esc(search + ' ' + ' '.join(TOPIC_NAME[t].lower() for t in it['topics'])),
+                   href, esc(it['anchor']), esc(it['name']),
+                   cover_html(it, date), chip, tag, esc(it['name']), kw,
                    esc(it['line']), iss['no'], short_date(date), wd, href, esc(it['anchor'])))
     latest = issues[0]
     total = len(cards)
-    tabs = '<button class="pill" data-role="" aria-pressed="true">全部<span class="c">%d</span></button>' % total
-    tabs += ''.join('<button class="pill" data-role="%s" aria-pressed="false">%s<span class="c">%d</span></button>'
-                    % (k, n, counts[k]) for k, n in ROLES)
+    tabs = '<button class="pill" data-topic="" aria-pressed="true"><span class="pl">全部</span><span class="c">%d</span></button>' % total
+    tabs += ''.join('<button class="pill" data-topic="%s" aria-pressed="false"><span class="dot tp-%s"></span><span class="pl">%s</span><span class="c">%d</span></button>'
+                    % (k, k, n, counts[k]) for k, n in TOPICS)
     with open(os.path.join(ROOT, 'hub_template.html'), encoding='utf-8') as f:
         tpl = f.read()
     rep = {
         '{{LATEST_LABEL}}': esc('最新 · %s %s · 第 %02d 期' % (short_date(latest['date']), weekday(latest['date']), latest['no'])),
         '{{LATEST_HREF}}': './%s/' % latest['slug'],
         '{{ISSUE_COUNT}}': str(len(issues)), '{{ITEM_COUNT}}': str(total),
-        '{{ROLE_TABS}}': tabs, '{{ISSUE_OPTIONS}}': '\n'.join(options),
+        '{{TOPIC_TABS}}': tabs, '{{ISSUE_OPTIONS}}': '\n'.join(options),
         '{{CARDS}}': '\n'.join(cards), '{{PAST}}': '\n'.join(past),
     }
     for k, v in rep.items():
