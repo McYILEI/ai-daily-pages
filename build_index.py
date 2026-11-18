@@ -5,7 +5,7 @@
 
 它扫描根目录下每个早报文件夹（<slug>/index.html，新版早报页面），直接从页面里读出
 期号、日期、本期导读、正文条目（名称、推荐岗位、标签、关键词、一句话），生成可以按
-时间、按岗位（产品 / 开发 / 运营）浏览的总入口。早报页面本身不会被修改。
+时间、按话题浏览的总入口。早报页面本身不会被修改。
 
 - 日期：优先用根目录的标记文件 .slug-YYYY-MM-DD（内容是文件夹名），否则用页面标题里的 MM/DD。
 - 可选 hub-meta/<YYYY-MM-DD>.json：给条目补充总入口展示用的关键词/标签/一句话
@@ -19,7 +19,7 @@ ROLES = [('product', '产品'), ('dev', '开发'), ('ops', '运营')]
 ROLE_NAME = dict(ROLES)
 ROLE_BY_CN = {v: k for k, v in ROLES}
 # 总入口按话题分类（不按岗位）。卡片上只显示一个主话题，按这个优先级取；筛选时条目有的话题都算。
-TOPICS = [('travel', 'AI 出行'), ('agent', 'AI 助理'), ('harness', 'AI 工程'), ('content', 'AI 内容')]
+TOPICS = [('travel', '旅行＋AI'), ('agent', 'Personal Agent'), ('harness', 'Harness/Agent 工程'), ('content', '内容制作＋AI')]
 TOPIC_NAME = dict(TOPICS)
 TOPIC_PRIORITY = ['content', 'travel', 'harness', 'agent']
 ISSUES_DIR = os.environ.get('ISSUES_DIR', '/workspace/ai-innovation-reports/issues')
@@ -139,7 +139,7 @@ def parse_issue(slug, h, date_hint):
         })
     for summ, mbody in re.findall(r'<details class="more">\s*<summary>(.*?)</summary>(.*?)</details>', h, re.S):
         body = summ
-        nm = re.search(r'<span class="mo-name">(.*?)<span class="roles">', body, re.S)
+        nm = re.search(r'<span class="mo-name">(.*?)(?:<span class="roles">|</span>)', body, re.S)
         name = clean_name(nm.group(1) if nm else '')
         mt = text((re.search(r'<span class="mo-title">(.*?)</span>', body, re.S) or [None, ''])[1])
         line = mt.split('：', 1)[1] if '：' in mt[:30] else mt
