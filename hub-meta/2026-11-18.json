@@ -1,0 +1,111 @@
+{
+ "_note": "第 02 期：总入口和卡片用；前 5 条为精选，按顺序进卡片；topics = 话题",
+ "items": {
+  "ChatGPT Wallet": {
+   "display": "ChatGPT Wallet",
+   "keywords": "dots · 逐笔批准 · 支付代币",
+   "tag": "代付钱包",
+   "tag_color": "green",
+   "line": "每笔都要刷脸或指纹确认，商家和 Agent 都拿不到真实卡号",
+   "topics": [
+    "agent"
+   ]
+  },
+  "Vayo 代订整趟行程": {
+   "display": "Vayo 代订整趟行程",
+   "keywords": "Booking Holdings · Stripe Link · 1Password",
+   "tag": "整趟代订",
+   "tag_color": "lime",
+   "line": "每笔都要旅客批准，供应商回了确认才告诉旅客订好了",
+   "topics": [
+    "travel",
+    "agent"
+   ]
+  },
+  "Sabre 主动提醒 API": {
+   "display": "Sabre 主动提醒 API",
+   "keywords": "Grok Bot · MCP · 航班变动",
+   "tag": "事件驱动",
+   "tag_color": "teal",
+   "line": "不等用户来问：降价、航班取消时主动推送，给出改签方案",
+   "topics": [
+    "travel",
+    "agent"
+   ]
+  },
+  "Claude 常驻 Agent 指南": {
+   "display": "Claude 常驻 Agent 指南",
+   "keywords": "事件收件箱 · 定时器 · 发件箱",
+   "tag": "Agent 架构",
+   "tag_color": "orange",
+   "line": "五个基础组件讲清 Agent 怎么被叫醒、记什么、何时打扰用户",
+   "topics": [
+    "harness",
+    "agent"
+   ]
+  },
+  "Kayak Ask AI": {
+   "display": "Kayak Ask AI",
+   "keywords": "便宜日期 · 实时价格 · 价格提醒",
+   "tag": "实时比价",
+   "tag_color": "yellow",
+   "line": "先预测便宜日期，再用实时可订价格核对，不给缓存价",
+   "topics": [
+    "travel"
+   ]
+  },
+  "Holiday Extras 的 dots": {
+   "display": "Holiday Extras 的 dots",
+   "keywords": "dots · BigQuery · 语音简报",
+   "tag": "主动助理",
+   "tag_color": "lime",
+   "line": "新功能上线第二天，没人开口，dot 就把数据报告送来了",
+   "topics": [
+    "agent",
+    "travel"
+   ]
+  },
+  "Creatify Max": {
+   "display": "Creatify Max",
+   "keywords": "视频广告 · 投放 · 每日复盘",
+   "tag": "广告 Agent",
+   "tag_color": "orange",
+   "line": "从出素材到投放复盘，上线、暂停、调预算都要用户批准",
+   "topics": [
+    "content"
+   ]
+  },
+  "SPILLWAY": {
+   "display": "SPILLWAY",
+   "keywords": "提示注入 · AgentDojo · 工具调用",
+   "tag": "安全防护",
+   "tag_color": "teal",
+   "line": "去向只认用户原话和结构化字段，2,847 次攻击 0 次得手",
+   "topics": [
+    "harness",
+    "agent"
+   ]
+  },
+  "真人验证内容联盟": {
+   "display": "真人验证内容联盟",
+   "keywords": "Steller · 目的地营销 · 真人拍摄",
+   "tag": "内容真实",
+   "tag_color": "green",
+   "line": "3 个美国目的地和 52 位创作者承诺只发真实拍摄的旅行内容",
+   "topics": [
+    "content",
+    "travel"
+   ]
+  },
+  "Plannotator": {
+   "display": "Plannotator",
+   "keywords": "计划批注 · 代码审阅 · 一键反馈",
+   "tag": "Agent 审阅",
+   "tag_color": "yellow",
+   "line": "批注 Agent 的计划和改动，一键发回，本周涨了 2,926 星",
+   "topics": [
+    "harness"
+   ]
+  }
+ }
+}
